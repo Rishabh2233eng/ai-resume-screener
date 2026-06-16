@@ -1,22 +1,33 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import jsPDF from "jspdf"
 import html2canvas from "html2canvas"
 
 export default function App() {
-  const [resume, setResume] = useState(null)
+  const [resume, setResume]               = useState(null)
   const [jobDescription, setJobDescription] = useState("")
-  const [result, setResult] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [dragging, setDragging] = useState(false)
+  const [result, setResult]               = useState(null)
+  const [loading, setLoading]             = useState(false)
+  const [error, setError]                 = useState("")
+  const [dragging, setDragging]           = useState(false)
   const resultsRef = useRef(null)
+  const navigate   = useNavigate()
 
-  // ── Drag and drop handlers ──
-  const handleDragOver = (e) => {
-    e.preventDefault()
-    setDragging(true)
+  const user = JSON.parse(localStorage.getItem("user") || "null")
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) navigate("/login")
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+    navigate("/login")
   }
+
+  // ── Drag and drop ──
+  const handleDragOver  = (e) => { e.preventDefault(); setDragging(true) }
   const handleDragLeave = () => setDragging(false)
   const handleDrop = (e) => {
     e.preventDefault()
@@ -40,15 +51,24 @@ export default function App() {
     setLoading(true)
     setResult(null)
 
+    const token = localStorage.getItem("token")
     const formData = new FormData()
     formData.append("resume", resume)
     formData.append("job_description", jobDescription)
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/match", formData)
+      const res = await axios.post(
+        "http://127.0.0.1:8000/api/match",
+        formData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
       setResult(res.data)
     } catch (err) {
-      setError("Something went wrong. Make sure the backend is running.")
+      if (err.response?.status === 401) {
+        handleLogout()
+      } else {
+        setError("Something went wrong. Make sure the backend is running.")
+      }
     } finally {
       setLoading(false)
     }
@@ -57,10 +77,10 @@ export default function App() {
   // ── PDF export ──
   const handleDownloadPDF = async () => {
     const element = resultsRef.current
-    const canvas = await html2canvas(element, { backgroundColor: "#0a0a0a" })
+    const canvas  = await html2canvas(element, { backgroundColor: "#0a0a0a" })
     const imgData = canvas.toDataURL("image/png")
-    const pdf = new jsPDF("p", "mm", "a4")
-    const pdfWidth = pdf.internal.pageSize.getWidth()
+    const pdf     = new jsPDF("p", "mm", "a4")
+    const pdfWidth  = pdf.internal.pageSize.getWidth()
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width
     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight)
     pdf.save("resume-match-report.pdf")
@@ -82,10 +102,26 @@ export default function App() {
     <div className="min-h-screen bg-gray-950 text-gray-100 p-6">
       <div className="max-w-2xl mx-auto">
 
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-white mb-1">AI Resume Screener</h1>
-          <p className="text-gray-400 text-sm">Upload your resume and paste a job description to get your match score</p>
+        {/* Navbar */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-white">AI Resume Screener</h1>
+            <p className="text-gray-400 text-xs">Welcome, {user?.name || "User"}</p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigate("/history")}
+              className="bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium px-4 py-2 rounded-xl transition-colors border border-gray-700"
+            >
+              History
+            </button>
+            <button
+              onClick={handleLogout}
+              className="bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium px-4 py-2 rounded-xl transition-colors border border-gray-700"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         {/* Input Card */}
@@ -144,10 +180,8 @@ export default function App() {
             />
           </div>
 
-          {/* Error */}
           {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
 
-          {/* Submit */}
           <button
             onClick={handleSubmit}
             disabled={loading}
@@ -178,7 +212,6 @@ export default function App() {
         {result && (
           <div ref={resultsRef} className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
 
-            {/* Fit Score */}
             <div className="text-center mb-6">
               <p className="text-sm text-gray-400 mb-1">Overall Fit Score</p>
               <p className={`text-6xl font-bold mb-1 ${scoreColor(result.fit_score)}`}>
@@ -193,7 +226,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Sub scores */}
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="bg-gray-800 rounded-xl p-4 text-center">
                 <p className="text-xs text-gray-400 mb-1">Semantic Score</p>
@@ -211,7 +243,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Matched Skills */}
             {result.matched_skills.length > 0 && (
               <div className="mb-4">
                 <p className="text-sm font-medium text-gray-300 mb-2">✅ Matched Skills</p>
@@ -225,7 +256,6 @@ export default function App() {
               </div>
             )}
 
-            {/* Missing Skills */}
             {result.missing_skills.length > 0 && (
               <div className="mb-6">
                 <p className="text-sm font-medium text-gray-300 mb-2">❌ Missing Skills</p>
@@ -239,7 +269,6 @@ export default function App() {
               </div>
             )}
 
-            {/* Download Button */}
             <button
               onClick={handleDownloadPDF}
               className="w-full bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold py-3 rounded-xl transition-colors border border-gray-700 text-sm"
