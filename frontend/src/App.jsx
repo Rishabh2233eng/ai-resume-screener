@@ -54,6 +54,7 @@ export default function App() {
       setResult(res.data)
     } catch (err) {
       if (err.response?.status === 401) handleLogout()
+      else if (err.response?.status === 403) setError(err.response.data.detail)
       else setError("Something went wrong. Make sure the backend is running.")
     } finally {
       setLoading(false)
@@ -75,12 +76,6 @@ export default function App() {
     if (n >= 50) return "text-amber-400"
     return "text-red-400"
   }
-  const scoreGradient = (s) => {
-    const n = parseFloat(s)
-    if (n >= 70) return "from-emerald-500 to-cyan-500"
-    if (n >= 50) return "from-amber-500 to-orange-500"
-    return "from-red-500 to-rose-500"
-  }
 
   return (
     <div style={{ background: "#060b18", minHeight: "100vh", color: "#e2e8f0", fontFamily: "'Segoe UI', sans-serif" }}>
@@ -95,6 +90,11 @@ export default function App() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <span style={{ fontSize: "13px", color: "#64748b", marginRight: "4px" }}>Hi, {user?.name?.split(" ")[0] || "User"}</span>
+          {result?.is_premium === false && (
+            <span style={{ fontSize: "11px", color: "#fbbf24", background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.2)", padding: "4px 10px", borderRadius: "20px" }}>
+              {result.analyses_used}/{result.analyses_limit} used
+            </span>
+          )}
           <button onClick={() => navigate("/history")} style={{ padding: "6px 14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "#94a3b8", fontSize: "13px", cursor: "pointer" }}>Dashboard</button>
           <button onClick={handleLogout} style={{ padding: "6px 14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "#94a3b8", fontSize: "13px", cursor: "pointer" }}>Sign out</button>
         </div>
@@ -118,7 +118,6 @@ export default function App() {
         {/* Input grid */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
 
-          {/* Upload */}
           <div>
             <label style={{ display: "block", fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#475569", marginBottom: "8px" }}>Your Resume</label>
             <div
@@ -162,7 +161,6 @@ export default function App() {
             <input id="fileInput" type="file" accept=".pdf" className="hidden" onChange={(e) => { setResume(e.target.files[0]); setError("") }} />
           </div>
 
-          {/* JD */}
           <div style={{ display: "flex", flexDirection: "column" }}>
             <label style={{ display: "block", fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#475569", marginBottom: "8px" }}>Job Description</label>
             <textarea
@@ -175,7 +173,23 @@ export default function App() {
           </div>
         </div>
 
-        {error && <p style={{ color: "#f87171", fontSize: "13px", marginBottom: "12px" }}>{error}</p>}
+        {/* Error / Paywall */}
+        {error && (
+          error.includes("limit reached") ? (
+            <div style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.08), rgba(245,158,11,0.08))", border: "1px solid rgba(251,191,36,0.2)", borderRadius: "16px", padding: "28px", textAlign: "center", marginBottom: "20px" }}>
+              <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: "rgba(251,191,36,0.15)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px" }}>
+                <svg width="22" height="22" fill="none" stroke="#fbbf24" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              </div>
+              <h3 style={{ fontSize: "17px", fontWeight: 700, color: "#f1f5f9", margin: "0 0 6px" }}>You've used all 3 free analyses this month</h3>
+              <p style={{ fontSize: "13px", color: "#94a3b8", margin: "0 0 20px" }}>Upgrade to Premium for unlimited resume matching, PDF reports, and priority processing</p>
+              <button style={{ padding: "12px 32px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #f59e0b, #f97316)", color: "white", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>
+                Upgrade to Premium — ₹99/month
+              </button>
+            </div>
+          ) : (
+            <p style={{ color: "#f87171", fontSize: "13px", marginBottom: "12px" }}>{error}</p>
+          )
+        )}
 
         {/* Analyze button */}
         <button
@@ -220,10 +234,9 @@ export default function App() {
         {result && (
           <div ref={resultsRef}>
 
-            {/* Score hero card */}
             <div style={{ background: "linear-gradient(135deg, rgba(37,99,235,0.12), rgba(8,145,178,0.12))", border: "1px solid rgba(56,189,248,0.15)", borderRadius: "16px", padding: "32px", marginBottom: "16px", textAlign: "center" }}>
               <p style={{ fontSize: "12px", color: "#64748b", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "8px" }}>Overall Fit Score</p>
-              <div className={`text-7xl font-bold mb-2 ${scoreColor(result.fit_score)}`} style={{ fontSize: "72px", fontWeight: 700, marginBottom: "8px" }}>
+              <div className={`${scoreColor(result.fit_score)}`} style={{ fontSize: "72px", fontWeight: 700, marginBottom: "8px" }}>
                 {result.fit_score}%
               </div>
               <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 16px", borderRadius: "20px", background: "rgba(255,255,255,0.06)", fontSize: "14px", color: "#e2e8f0", marginBottom: "20px" }}>
@@ -234,7 +247,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Sub scores */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
               {[
                 { label: "Semantic Score", value: result.semantic_score, sub: "Meaning similarity" },
@@ -242,13 +254,12 @@ export default function App() {
               ].map(item => (
                 <div key={item.label} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "12px", padding: "20px", textAlign: "center" }}>
                   <p style={{ fontSize: "11px", color: "#475569", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "6px" }}>{item.label}</p>
-                  <p className={`text-2xl font-bold ${scoreColor(item.value)}`} style={{ fontSize: "28px", fontWeight: 700, marginBottom: "4px" }}>{item.value}%</p>
+                  <p className={`${scoreColor(item.value)}`} style={{ fontSize: "28px", fontWeight: 700, marginBottom: "4px" }}>{item.value}%</p>
                   <p style={{ fontSize: "11px", color: "#475569" }}>{item.sub}</p>
                 </div>
               ))}
             </div>
 
-            {/* Skills */}
             {result.matched_skills.length > 0 && (
               <div style={{ background: "rgba(16,185,129,0.04)", border: "1px solid rgba(16,185,129,0.12)", borderRadius: "12px", padding: "20px", marginBottom: "12px" }}>
                 <p style={{ fontSize: "12px", color: "#10b981", fontWeight: 600, marginBottom: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
@@ -277,7 +288,6 @@ export default function App() {
               </div>
             )}
 
-            {/* Download */}
             <button onClick={handleDownloadPDF} style={{ width: "100%", padding: "12px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", color: "#94a3b8", fontSize: "13px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
               <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               Download Report as PDF
