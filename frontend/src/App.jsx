@@ -25,6 +25,55 @@ export default function App() {
     navigate("/login")
   }
 
+  const handleUpgrade = async () => {
+    const token = localStorage.getItem("token")
+    try {
+      const orderRes = await axios.post(
+        "http://127.0.0.1:8000/api/payment/create-order",
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+
+      const options = {
+        key: orderRes.data.key_id,
+        amount: orderRes.data.amount,
+        currency: orderRes.data.currency,
+        name: "ResumeIQ",
+        description: "Premium Subscription - Unlimited Analyses",
+        order_id: orderRes.data.order_id,
+        handler: async function (response) {
+          try {
+            await axios.post(
+              "http://127.0.0.1:8000/api/payment/verify-payment",
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              },
+              { headers: { Authorization: `Bearer ${token}` } }
+            )
+            alert("🎉 You are now a Premium member! Refresh to see unlimited analyses.")
+            window.location.reload()
+          } catch (err) {
+            alert("Payment verification failed. Please contact support.")
+          }
+        },
+        prefill: {
+          name: user?.name || "",
+          email: user?.email || ""
+        },
+        theme: {
+          color: "#2563eb"
+        }
+      }
+
+      const rzp = new window.Razorpay(options)
+      rzp.open()
+    } catch (err) {
+      alert("Failed to start payment. Please try again.")
+    }
+  }
+
   const handleDragOver  = (e) => { e.preventDefault(); setDragging(true) }
   const handleDragLeave = () => setDragging(false)
   const handleDrop = (e) => {
@@ -80,7 +129,6 @@ export default function App() {
   return (
     <div style={{ background: "#060b18", minHeight: "100vh", color: "#e2e8f0", fontFamily: "'Segoe UI', sans-serif" }}>
 
-      {/* Navbar */}
       <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "0 32px", height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 50, background: "rgba(6,11,24,0.85)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "linear-gradient(135deg, #2563eb, #06b6d4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -102,7 +150,6 @@ export default function App() {
 
       <div style={{ maxWidth: "760px", margin: "0 auto", padding: "48px 24px" }}>
 
-        {/* Hero */}
         <div style={{ textAlign: "center", marginBottom: "48px" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 14px", borderRadius: "20px", border: "1px solid rgba(56,189,248,0.2)", background: "rgba(56,189,248,0.06)", fontSize: "12px", color: "#38bdf8", marginBottom: "20px" }}>
             <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -115,7 +162,6 @@ export default function App() {
           <p style={{ fontSize: "15px", color: "#64748b", maxWidth: "440px", margin: "0 auto" }}>Upload your resume and paste a job description — get instant AI-powered match analysis</p>
         </div>
 
-        {/* Input grid */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
 
           <div>
@@ -173,7 +219,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Error / Paywall */}
         {error && (
           error.includes("limit reached") ? (
             <div style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.08), rgba(245,158,11,0.08))", border: "1px solid rgba(251,191,36,0.2)", borderRadius: "16px", padding: "28px", textAlign: "center", marginBottom: "20px" }}>
@@ -182,7 +227,7 @@ export default function App() {
               </div>
               <h3 style={{ fontSize: "17px", fontWeight: 700, color: "#f1f5f9", margin: "0 0 6px" }}>You've used all 3 free analyses this month</h3>
               <p style={{ fontSize: "13px", color: "#94a3b8", margin: "0 0 20px" }}>Upgrade to Premium for unlimited resume matching, PDF reports, and priority processing</p>
-              <button style={{ padding: "12px 32px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #f59e0b, #f97316)", color: "white", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>
+              <button onClick={handleUpgrade} style={{ padding: "12px 32px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #f59e0b, #f97316)", color: "white", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>
                 Upgrade to Premium — ₹99/month
               </button>
             </div>
@@ -191,7 +236,6 @@ export default function App() {
           )
         )}
 
-        {/* Analyze button */}
         <button
           onClick={handleSubmit}
           disabled={loading}
@@ -230,7 +274,6 @@ export default function App() {
           )}
         </button>
 
-        {/* Results */}
         {result && (
           <div ref={resultsRef}>
 

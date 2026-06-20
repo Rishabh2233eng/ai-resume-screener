@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes.match import router as match_router
 from app.routes.users import router as users_router
+from app.routes.payment import router as payment_router
 from app.database import engine
 from app import models
 
@@ -19,6 +20,7 @@ app.add_middleware(
 
 app.include_router(match_router, prefix="/api")
 app.include_router(users_router, prefix="/api/users")
+app.include_router(payment_router, prefix="/api/payment")
 
 @app.get("/")
 def root():
