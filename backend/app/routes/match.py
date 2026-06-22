@@ -5,14 +5,14 @@ from app.extractor import extract_text_from_pdf
 from app.matcher import match_resume_to_job
 from app.database import get_db
 from app.auth import get_current_user
-from app.main import limiter
+from app.limiter import limiter
 from app import models
 
 router = APIRouter()
 
 FREE_MONTHLY_LIMIT = 3
 MAX_JD_LENGTH = 5000
-MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+MAX_FILE_SIZE = 5 * 1024 * 1024
 
 @router.post("/match")
 @limiter.limit("20/minute")
@@ -23,22 +23,16 @@ async def match(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
-    # Input validation
     if not resume.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are accepted.")
-
     file_bytes = await resume.read()
-
     if len(file_bytes) > MAX_FILE_SIZE:
         raise HTTPException(status_code=400, detail="File size must be under 5MB.")
-
     if not job_description.strip():
         raise HTTPException(status_code=400, detail="Job description cannot be empty.")
-
     if len(job_description) > MAX_JD_LENGTH:
         raise HTTPException(status_code=400, detail=f"Job description must be under {MAX_JD_LENGTH} characters.")
 
-    # Monthly reset
     now = datetime.utcnow()
     if current_user.usage_reset_date.month != now.month or \
        current_user.usage_reset_date.year != now.year:
@@ -46,7 +40,6 @@ async def match(
         current_user.usage_reset_date = now
         db.commit()
 
-    # Free tier limit
     if not current_user.is_premium and current_user.analyses_this_month >= FREE_MONTHLY_LIMIT:
         raise HTTPException(
             status_code=403,
@@ -54,7 +47,6 @@ async def match(
         )
 
     resume_text = extract_text_from_pdf(file_bytes)
-
     if len(resume_text.strip()) < 50:
         raise HTTPException(status_code=400, detail="Could not extract enough text from the PDF. Make sure it's not a scanned image.")
 
@@ -71,12 +63,10 @@ async def match(
         recommendation=result["recommendation"]
     )
     db.add(analysis)
-
     current_user.analyses_this_month += 1
     db.commit()
 
     result["analyses_used"] = current_user.analyses_this_month
     result["analyses_limit"] = "unlimited" if current_user.is_premium else FREE_MONTHLY_LIMIT
     result["is_premium"] = current_user.is_premium
-
     return result

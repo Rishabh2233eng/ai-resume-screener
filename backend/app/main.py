@@ -1,8 +1,8 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from app.limiter import limiter
 from app.routes.match import router as match_router
 from app.routes.users import router as users_router
 from app.routes.payment import router as payment_router
@@ -11,17 +11,14 @@ from app import models
 
 models.Base.metadata.create_all(bind=engine)
 
-limiter = Limiter(key_func=get_remote_address)
-
 app = FastAPI(title="ResumeIQ")
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# CORS lockdown — only allow your frontend domains
 ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://resumeiq.vercel.app",  # update this after Vercel deployment
+    "https://resumeiq.vercel.app",
 ]
 
 app.add_middleware(
