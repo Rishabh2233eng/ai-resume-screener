@@ -1,1 +1,82 @@
 @import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Mobile responsiveness — all pages */
+@media (max-width: 768px) {
+
+  /* Login / Register split screen — stack vertically */
+  .auth-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .auth-left {
+    display: none !important;
+  }
+  .auth-right {
+    padding: 40px 28px !important;
+  }
+
+  /* App analyzer — stack columns */
+  .analyzer-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Navbar — tighter padding */
+  .main-nav {
+    padding: 0 16px !important;
+  }
+
+  /* Hero headline */
+  .hero-headline {
+    font-size: 32px !important;
+    letter-spacing: -0.5px !important;
+  }
+
+  /* Results sub-score grid */
+  .score-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Dashboard stats */
+  .stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Landing page */
+  .landing-nav {
+    padding: 0 16px !important;
+  }
+  .landing-hero {
+    padding: 60px 20px 40px !important;
+  }
+  .landing-stats {
+    gap: 24px !important;
+  }
+  .cta-row {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  .cta-row button {
+    width: 100% !important;
+    max-width: 320px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-right {
+    padding: 32px 20px !important;
+  }
+  .hero-headline {
+    font-size: 26px !important;
+  }
+  .score-big {
+    font-size: 52px !important;
+  }
+}
+
+input::placeholder { color: #334155; }
+textarea::placeholder { color: #334155; }

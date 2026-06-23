@@ -17,7 +17,7 @@ export default function Login() {
       const res = await axios.post("http://127.0.0.1:8000/api/users/login", { email, password })
       localStorage.setItem("token", res.data.access_token)
       localStorage.setItem("user", JSON.stringify(res.data.user))
-      navigate("/")
+      navigate("/app")
     } catch (err) {
       setError(err.response?.data?.detail || "Login failed.")
     } finally {
@@ -36,16 +36,16 @@ export default function Login() {
 
   return (
     <div style={{ background: "#060b18", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", fontFamily: "'Segoe UI', sans-serif" }}>
-      <div style={{ width: "100%", maxWidth: "920px", display: "grid", gridTemplateColumns: "1fr 1fr", borderRadius: "20px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)", minHeight: "560px", animation: "fadeUp 0.5s ease" }}>
+      <div className="auth-grid" style={{ width: "100%", maxWidth: "920px", display: "grid", gridTemplateColumns: "1fr 1fr", borderRadius: "20px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)", minHeight: "560px", animation: "fadeUp 0.5s ease" }}>
 
-        {/* LEFT - Brand panel */}
-        <div style={{ background: "linear-gradient(155deg, #1e3a8a 0%, #0c4a6e 55%, #042c53 100%)", padding: "48px 40px", display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", overflow: "hidden" }}>
+        {/* LEFT */}
+        <div className="auth-left" style={{ background: "linear-gradient(155deg, #1e3a8a 0%, #0c4a6e 55%, #042c53 100%)", padding: "48px 40px", display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", width: "320px", height: "320px", borderRadius: "50%", background: "radial-gradient(circle, rgba(56,189,248,0.22), transparent 70%)", top: "-110px", right: "-110px" }} />
           <div style={{ position: "absolute", width: "220px", height: "220px", borderRadius: "50%", background: "radial-gradient(circle, rgba(37,99,235,0.28), transparent 70%)", bottom: "-70px", left: "-70px" }} />
 
           <Link to="/" style={{ textDecoration: "none", position: "relative", zIndex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(8px)" }}>
+              <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <svg width="19" height="19" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
               </div>
               <span style={{ color: "white", fontSize: "17px", fontWeight: 700 }}>ResumeIQ</span>
@@ -62,11 +62,7 @@ export default function Login() {
           </div>
 
           <div style={{ display: "flex", gap: "28px", position: "relative", zIndex: 1 }}>
-            {[
-              { num: "73%", lbl: "avg fit score" },
-              { num: "2.1k", lbl: "resumes analyzed" },
-              { num: "94%", lbl: "accuracy" }
-            ].map(s => (
+            {[{ num: "73%", lbl: "avg fit score" }, { num: "2.1k", lbl: "resumes analyzed" }, { num: "94%", lbl: "accuracy" }].map(s => (
               <div key={s.lbl}>
                 <span style={{ color: "white", fontSize: "24px", fontWeight: 700, display: "block" }}>{s.num}</span>
                 <span style={{ color: "rgba(255,255,255,0.55)", fontSize: "11px" }}>{s.lbl}</span>
@@ -75,8 +71,8 @@ export default function Login() {
           </div>
         </div>
 
-        {/* RIGHT - Form */}
-        <div style={{ background: "#0a0f1f", padding: "56px 44px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        {/* RIGHT */}
+        <div className="auth-right" style={{ background: "#0a0f1f", padding: "56px 44px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <h1 style={{ fontSize: "26px", fontWeight: 700, color: "#f1f5f9", margin: "0 0 6px", letterSpacing: "-0.5px" }}>Welcome back</h1>
           <p style={{ fontSize: "14px", color: "#64748b", margin: "0 0 32px" }}>Sign in to continue to your dashboard</p>
 
@@ -104,13 +100,13 @@ export default function Login() {
           )}
 
           <button onClick={handleLogin} disabled={loading}
-            style={{ width: "100%", padding: "13px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #2563eb, #0891b2)", color: "white", fontSize: "14px", fontWeight: 600, cursor: loading ? "not-allowed" : "pointer", marginTop: "4px", transition: "transform 0.15s, opacity 0.15s", opacity: loading ? 0.7 : 1 }}
+            style={{ width: "100%", padding: "13px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #2563eb, #0891b2)", color: "white", fontSize: "14px", fontWeight: 600, cursor: loading ? "not-allowed" : "pointer", marginBottom: "16px", transition: "transform 0.15s", opacity: loading ? 0.7 : 1 }}
             onMouseEnter={(e) => !loading && (e.currentTarget.style.transform = "translateY(-1px)")}
             onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}>
             {loading ? "Signing in..." : "Sign in"}
           </button>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", margin: "24px 0" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", margin: "20px 0" }}>
             <div style={{ flex: 1, height: "1px", background: "#1e293b" }} />
             <span style={{ fontSize: "11px", color: "#475569" }}>or</span>
             <div style={{ flex: 1, height: "1px", background: "#1e293b" }} />
@@ -118,9 +114,7 @@ export default function Login() {
 
           <div style={{ display: "flex", gap: "10px" }}>
             {["Google", "GitHub"].map(p => (
-              <button key={p} style={{ flex: 1, padding: "10px", borderRadius: "10px", border: "1px solid #1e293b", background: "transparent", color: "#94a3b8", fontSize: "13px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
-                {p}
-              </button>
+              <button key={p} style={{ flex: 1, padding: "10px", borderRadius: "10px", border: "1px solid #1e293b", background: "transparent", color: "#94a3b8", fontSize: "13px", cursor: "pointer" }}>{p}</button>
             ))}
           </div>
 
@@ -134,9 +128,6 @@ export default function Login() {
       <style>{`
         @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
         input::placeholder { color: #334155; }
-        @media (max-width: 800px) {
-          div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
-        }
       `}</style>
     </div>
   )

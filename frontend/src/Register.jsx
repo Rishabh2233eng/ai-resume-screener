@@ -19,7 +19,7 @@ export default function Register() {
       const res = await axios.post("http://127.0.0.1:8000/api/users/register", { name, email, password })
       localStorage.setItem("token", res.data.access_token)
       localStorage.setItem("user", JSON.stringify(res.data.user))
-      navigate("/")
+      navigate("/app")
     } catch (err) {
       setError(err.response?.data?.detail || "Registration failed.")
     } finally {
@@ -38,16 +38,16 @@ export default function Register() {
 
   return (
     <div style={{ background: "#060b18", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", fontFamily: "'Segoe UI', sans-serif" }}>
-      <div style={{ width: "100%", maxWidth: "920px", display: "grid", gridTemplateColumns: "1fr 1fr", borderRadius: "20px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)", minHeight: "600px", animation: "fadeUp 0.5s ease" }}>
+      <div className="auth-grid" style={{ width: "100%", maxWidth: "920px", display: "grid", gridTemplateColumns: "1fr 1fr", borderRadius: "20px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.08)", minHeight: "600px", animation: "fadeUp 0.5s ease" }}>
 
-        {/* LEFT - Brand panel */}
-        <div style={{ background: "linear-gradient(155deg, #1e3a8a 0%, #0c4a6e 55%, #042c53 100%)", padding: "48px 40px", display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", overflow: "hidden" }}>
+        {/* LEFT */}
+        <div className="auth-left" style={{ background: "linear-gradient(155deg, #1e3a8a 0%, #0c4a6e 55%, #042c53 100%)", padding: "48px 40px", display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", width: "320px", height: "320px", borderRadius: "50%", background: "radial-gradient(circle, rgba(56,189,248,0.22), transparent 70%)", top: "-110px", right: "-110px" }} />
           <div style={{ position: "absolute", width: "220px", height: "220px", borderRadius: "50%", background: "radial-gradient(circle, rgba(37,99,235,0.28), transparent 70%)", bottom: "-70px", left: "-70px" }} />
 
           <Link to="/" style={{ textDecoration: "none", position: "relative", zIndex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(8px)" }}>
+              <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <svg width="19" height="19" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
               </div>
               <span style={{ color: "white", fontSize: "17px", fontWeight: 700 }}>ResumeIQ</span>
@@ -61,13 +61,8 @@ export default function Register() {
             <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "14px", lineHeight: 1.7, margin: "0 0 24px", maxWidth: "320px" }}>
               Join thousands of job seekers using AI to understand their real fit before applying.
             </p>
-
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {[
-                "Semantic AI resume matching",
-                "Skill gap analysis instantly",
-                "3 free analyses every month"
-              ].map(f => (
+              {["Semantic AI resume matching", "Skill gap analysis instantly", "3 free analyses every month"].map(f => (
                 <div key={f} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: "rgba(56,189,248,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <svg width="11" height="11" fill="none" stroke="#38bdf8" strokeWidth="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
@@ -78,13 +73,11 @@ export default function Register() {
             </div>
           </div>
 
-          <div style={{ position: "relative", zIndex: 1 }}>
-            <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "12px" }}>Free forever, no credit card required</span>
-          </div>
+          <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "12px", position: "relative", zIndex: 1 }}>Free forever, no credit card required</span>
         </div>
 
-        {/* RIGHT - Form */}
-        <div style={{ background: "#0a0f1f", padding: "48px 44px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        {/* RIGHT */}
+        <div className="auth-right" style={{ background: "#0a0f1f", padding: "48px 44px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <h1 style={{ fontSize: "26px", fontWeight: 700, color: "#f1f5f9", margin: "0 0 6px", letterSpacing: "-0.5px" }}>Create your account</h1>
           <p style={{ fontSize: "14px", color: "#64748b", margin: "0 0 28px" }}>Start screening your resume with AI</p>
 
@@ -95,13 +88,11 @@ export default function Register() {
           ].map(({ label, type, val, set, ph, key }) => (
             <div key={key} style={{ marginBottom: "16px" }}>
               <label style={{ display: "block", fontSize: "12px", color: "#64748b", marginBottom: "7px", fontWeight: 500 }}>{label}</label>
-              <input
-                type={type} placeholder={ph} value={val}
+              <input type={type} placeholder={ph} value={val}
                 onChange={(e) => set(e.target.value)}
                 onFocus={() => setFocused(key)} onBlur={() => setFocused("")}
                 onKeyDown={(e) => e.key === "Enter" && handleRegister()}
-                style={inputStyle(key)}
-              />
+                style={inputStyle(key)} />
             </div>
           ))}
 
@@ -112,13 +103,13 @@ export default function Register() {
           )}
 
           <button onClick={handleRegister} disabled={loading}
-            style={{ width: "100%", padding: "13px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #2563eb, #0891b2)", color: "white", fontSize: "14px", fontWeight: 600, cursor: loading ? "not-allowed" : "pointer", marginTop: "4px", transition: "transform 0.15s, opacity 0.15s", opacity: loading ? 0.7 : 1 }}
+            style={{ width: "100%", padding: "13px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #2563eb, #0891b2)", color: "white", fontSize: "14px", fontWeight: 600, cursor: loading ? "not-allowed" : "pointer", marginBottom: "16px", transition: "transform 0.15s", opacity: loading ? 0.7 : 1 }}
             onMouseEnter={(e) => !loading && (e.currentTarget.style.transform = "translateY(-1px)")}
             onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}>
             {loading ? "Creating account..." : "Create account"}
           </button>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", margin: "24px 0" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", margin: "20px 0" }}>
             <div style={{ flex: 1, height: "1px", background: "#1e293b" }} />
             <span style={{ fontSize: "11px", color: "#475569" }}>or</span>
             <div style={{ flex: 1, height: "1px", background: "#1e293b" }} />
@@ -126,9 +117,7 @@ export default function Register() {
 
           <div style={{ display: "flex", gap: "10px" }}>
             {["Google", "GitHub"].map(p => (
-              <button key={p} style={{ flex: 1, padding: "10px", borderRadius: "10px", border: "1px solid #1e293b", background: "transparent", color: "#94a3b8", fontSize: "13px", cursor: "pointer" }}>
-                {p}
-              </button>
+              <button key={p} style={{ flex: 1, padding: "10px", borderRadius: "10px", border: "1px solid #1e293b", background: "transparent", color: "#94a3b8", fontSize: "13px", cursor: "pointer" }}>{p}</button>
             ))}
           </div>
 
@@ -142,9 +131,6 @@ export default function Register() {
       <style>{`
         @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
         input::placeholder { color: #334155; }
-        @media (max-width: 800px) {
-          div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
-        }
       `}</style>
     </div>
   )
