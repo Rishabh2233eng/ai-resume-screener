@@ -22,7 +22,7 @@ export default function App() {
   const handleLogout = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
-    navigate("/login")
+    navigate("/")
   }
 
   const handleUpgrade = async () => {
@@ -33,7 +33,6 @@ export default function App() {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       )
-
       const options = {
         key: orderRes.data.key_id,
         amount: orderRes.data.amount,
@@ -58,15 +57,9 @@ export default function App() {
             alert("Payment verification failed. Please contact support.")
           }
         },
-        prefill: {
-          name: user?.name || "",
-          email: user?.email || ""
-        },
-        theme: {
-          color: "#2563eb"
-        }
+        prefill: { name: user?.name || "", email: user?.email || "" },
+        theme: { color: "#2563eb" }
       }
-
       const rzp = new window.Razorpay(options)
       rzp.open()
     } catch (err) {
@@ -121,16 +114,16 @@ export default function App() {
 
   const scoreColor = (s) => {
     const n = parseFloat(s)
-    if (n >= 70) return "text-emerald-400"
-    if (n >= 50) return "text-amber-400"
-    return "text-red-400"
+    if (n >= 70) return "#10b981"
+    if (n >= 50) return "#f59e0b"
+    return "#ef4444"
   }
 
   return (
     <div style={{ background: "#060b18", minHeight: "100vh", color: "#e2e8f0", fontFamily: "'Segoe UI', sans-serif" }}>
 
       <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "0 32px", height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 50, background: "rgba(6,11,24,0.85)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }} onClick={() => navigate("/")}>
           <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "linear-gradient(135deg, #2563eb, #06b6d4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <svg width="16" height="16" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
           </div>
@@ -163,7 +156,6 @@ export default function App() {
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
-
           <div>
             <label style={{ display: "block", fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#475569", marginBottom: "8px" }}>Your Resume</label>
             <div
@@ -173,17 +165,9 @@ export default function App() {
               onClick={() => document.getElementById("fileInput").click()}
               style={{
                 border: `2px dashed ${dragging ? "#38bdf8" : resume ? "#10b981" : "rgba(255,255,255,0.1)"}`,
-                borderRadius: "12px",
-                padding: "32px 16px",
-                textAlign: "center",
-                cursor: "pointer",
+                borderRadius: "12px", padding: "32px 16px", textAlign: "center", cursor: "pointer",
                 background: dragging ? "rgba(56,189,248,0.05)" : resume ? "rgba(16,185,129,0.05)" : "rgba(255,255,255,0.02)",
-                transition: "all 0.2s",
-                height: "160px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center"
+                transition: "all 0.2s", height: "160px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"
               }}
             >
               {resume ? (
@@ -240,22 +224,14 @@ export default function App() {
           onClick={handleSubmit}
           disabled={loading}
           style={{
-            width: "100%",
-            padding: "14px",
-            borderRadius: "12px",
-            border: "none",
+            width: "100%", padding: "14px", borderRadius: "12px", border: "none",
             background: loading ? "rgba(37,99,235,0.4)" : "linear-gradient(135deg, #2563eb, #0891b2)",
-            color: "white",
-            fontSize: "15px",
-            fontWeight: 600,
-            cursor: loading ? "not-allowed" : "pointer",
-            marginBottom: "32px",
-            letterSpacing: "-0.2px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "8px"
+            color: "white", fontSize: "15px", fontWeight: 600,
+            cursor: loading ? "not-allowed" : "pointer", marginBottom: "32px",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: "8px"
           }}
+          onMouseEnter={(e) => !loading && (e.currentTarget.style.transform = "translateY(-1px)")}
+          onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
         >
           {loading ? (
             <>
@@ -276,17 +252,16 @@ export default function App() {
 
         {result && (
           <div ref={resultsRef}>
-
             <div style={{ background: "linear-gradient(135deg, rgba(37,99,235,0.12), rgba(8,145,178,0.12))", border: "1px solid rgba(56,189,248,0.15)", borderRadius: "16px", padding: "32px", marginBottom: "16px", textAlign: "center" }}>
               <p style={{ fontSize: "12px", color: "#64748b", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "8px" }}>Overall Fit Score</p>
-              <div className={`${scoreColor(result.fit_score)}`} style={{ fontSize: "72px", fontWeight: 700, marginBottom: "8px" }}>
+              <div style={{ fontSize: "72px", fontWeight: 700, marginBottom: "8px", color: scoreColor(result.fit_score) }}>
                 {result.fit_score}%
               </div>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 16px", borderRadius: "20px", background: "rgba(255,255,255,0.06)", fontSize: "14px", color: "#e2e8f0", marginBottom: "20px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", padding: "4px 16px", borderRadius: "20px", background: "rgba(255,255,255,0.06)", fontSize: "14px", color: "#e2e8f0", marginBottom: "20px" }}>
                 {result.recommendation}
               </div>
               <div style={{ height: "6px", background: "rgba(255,255,255,0.06)", borderRadius: "3px", overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${result.fit_score}%`, background: `linear-gradient(90deg, #2563eb, #06b6d4)`, borderRadius: "3px", transition: "width 1s ease" }} />
+                <div style={{ height: "100%", width: `${result.fit_score}%`, background: "linear-gradient(90deg, #2563eb, #06b6d4)", borderRadius: "3px", transition: "width 1s ease" }} />
               </div>
             </div>
 
@@ -297,7 +272,7 @@ export default function App() {
               ].map(item => (
                 <div key={item.label} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "12px", padding: "20px", textAlign: "center" }}>
                   <p style={{ fontSize: "11px", color: "#475569", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "6px" }}>{item.label}</p>
-                  <p className={`${scoreColor(item.value)}`} style={{ fontSize: "28px", fontWeight: 700, marginBottom: "4px" }}>{item.value}%</p>
+                  <p style={{ fontSize: "28px", fontWeight: 700, marginBottom: "4px", color: scoreColor(item.value) }}>{item.value}%</p>
                   <p style={{ fontSize: "11px", color: "#475569" }}>{item.sub}</p>
                 </div>
               ))}
@@ -340,12 +315,12 @@ export default function App() {
       </div>
 
       <style>{`
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-6px); }
-        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
         textarea::placeholder { color: #334155; }
         button:hover { opacity: 0.9; }
+        @media (max-width: 600px) {
+          div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+        }
       `}</style>
     </div>
   )
