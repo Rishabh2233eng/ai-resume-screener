@@ -122,7 +122,7 @@ export default function App() {
   return (
     <div style={{ background: "#060b18", minHeight: "100vh", color: "#e2e8f0", fontFamily: "'Segoe UI', sans-serif" }}>
 
-      <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "0 32px", height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 50, background: "rgba(6,11,24,0.85)" }}>
+      <nav className="main-nav" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "0 32px", height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 50, background: "rgba(6,11,24,0.85)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }} onClick={() => navigate("/")}>
           <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "linear-gradient(135deg, #2563eb, #06b6d4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <svg width="16" height="16" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -148,14 +148,14 @@ export default function App() {
             <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
             Powered by semantic AI matching
           </div>
-          <h1 style={{ fontSize: "40px", fontWeight: 700, lineHeight: 1.15, letterSpacing: "-1px", marginBottom: "14px", color: "#f1f5f9" }}>
+          <h1 className="hero-headline" style={{ fontSize: "40px", fontWeight: 700, lineHeight: 1.15, letterSpacing: "-1px", marginBottom: "14px", color: "#f1f5f9" }}>
             Know your fit score<br />
             <span style={{ background: "linear-gradient(90deg, #2563eb, #38bdf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>before you apply</span>
           </h1>
           <p style={{ fontSize: "15px", color: "#64748b", maxWidth: "440px", margin: "0 auto" }}>Upload your resume and paste a job description — get instant AI-powered match analysis</p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
+        <div className="analyzer-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
           <div>
             <label style={{ display: "block", fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#475569", marginBottom: "8px" }}>Your Resume</label>
             <div
@@ -167,7 +167,8 @@ export default function App() {
                 border: `2px dashed ${dragging ? "#38bdf8" : resume ? "#10b981" : "rgba(255,255,255,0.1)"}`,
                 borderRadius: "12px", padding: "32px 16px", textAlign: "center", cursor: "pointer",
                 background: dragging ? "rgba(56,189,248,0.05)" : resume ? "rgba(16,185,129,0.05)" : "rgba(255,255,255,0.02)",
-                transition: "all 0.2s", height: "160px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"
+                transition: "all 0.2s", height: "160px", display: "flex", flexDirection: "column",
+                alignItems: "center", justifyContent: "center"
               }}
             >
               {resume ? (
@@ -228,7 +229,8 @@ export default function App() {
             background: loading ? "rgba(37,99,235,0.4)" : "linear-gradient(135deg, #2563eb, #0891b2)",
             color: "white", fontSize: "15px", fontWeight: 600,
             cursor: loading ? "not-allowed" : "pointer", marginBottom: "32px",
-            display: "flex", alignItems: "center", justifyContent: "center", gap: "8px"
+            display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+            transition: "transform 0.15s"
           }}
           onMouseEnter={(e) => !loading && (e.currentTarget.style.transform = "translateY(-1px)")}
           onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
@@ -252,9 +254,10 @@ export default function App() {
 
         {result && (
           <div ref={resultsRef}>
+
             <div style={{ background: "linear-gradient(135deg, rgba(37,99,235,0.12), rgba(8,145,178,0.12))", border: "1px solid rgba(56,189,248,0.15)", borderRadius: "16px", padding: "32px", marginBottom: "16px", textAlign: "center" }}>
               <p style={{ fontSize: "12px", color: "#64748b", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "8px" }}>Overall Fit Score</p>
-              <div style={{ fontSize: "72px", fontWeight: 700, marginBottom: "8px", color: scoreColor(result.fit_score) }}>
+              <div className="score-big" style={{ fontSize: "72px", fontWeight: 700, marginBottom: "8px", color: scoreColor(result.fit_score) }}>
                 {result.fit_score}%
               </div>
               <div style={{ display: "inline-flex", alignItems: "center", padding: "4px 16px", borderRadius: "20px", background: "rgba(255,255,255,0.06)", fontSize: "14px", color: "#e2e8f0", marginBottom: "20px" }}>
@@ -265,7 +268,7 @@ export default function App() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
+            <div className="score-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
               {[
                 { label: "Semantic Score", value: result.semantic_score, sub: "Meaning similarity" },
                 { label: "Skill Match", value: result.skill_match_score, sub: `${result.total_job_skills} skills in JD` }
@@ -293,7 +296,7 @@ export default function App() {
             )}
 
             {result.missing_skills.length > 0 && (
-              <div style={{ background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.12)", borderRadius: "12px", padding: "20px", marginBottom: "16px" }}>
+              <div style={{ background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.12)", borderRadius: "12px", padding: "20px", marginBottom: "12px" }}>
                 <p style={{ fontSize: "12px", color: "#f87171", fontWeight: 600, marginBottom: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
                   <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6m0-6l6 6"/></svg>
                   Missing Skills ({result.missing_skills.length})
@@ -301,6 +304,25 @@ export default function App() {
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                   {result.missing_skills.map(skill => (
                     <span key={skill} style={{ padding: "4px 12px", borderRadius: "20px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", fontSize: "12px", color: "#f87171" }}>{skill}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {result.suggestions && result.suggestions.length > 0 && (
+              <div style={{ background: "rgba(37,99,235,0.04)", border: "1px solid rgba(37,99,235,0.15)", borderRadius: "12px", padding: "20px", marginBottom: "16px" }}>
+                <p style={{ fontSize: "12px", color: "#38bdf8", fontWeight: 600, marginBottom: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                  Improvement Suggestions ({result.suggestions.length})
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {result.suggestions.map((s, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "10px", padding: "10px 12px", background: "rgba(255,255,255,0.03)", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                      <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: "rgba(37,99,235,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "1px" }}>
+                        <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 700 }}>{i + 1}</span>
+                      </div>
+                      <p style={{ fontSize: "13px", color: "#94a3b8", margin: 0, lineHeight: 1.6 }}>{s}</p>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -318,9 +340,6 @@ export default function App() {
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
         textarea::placeholder { color: #334155; }
         button:hover { opacity: 0.9; }
-        @media (max-width: 600px) {
-          div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
-        }
       `}</style>
     </div>
   )
