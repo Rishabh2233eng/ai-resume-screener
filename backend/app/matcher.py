@@ -3,6 +3,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from app.skills_data import SKILLS
 import anthropic
 import os
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -13,39 +14,48 @@ def extract_skills(text: str) -> set:
     text_lower = text.lower()
     return {skill for skill in SKILLS if skill in text_lower}
 
-def generate_ai_suggestions(missing_skills: list, matched_skills: list, fit_score: float, job_text: str) -> list:
+def generate_ai_suggestions(missing_skills: list, matched_skills: list, fit_score: float, job_text: str, resume_text: str) -> list:
     try:
         client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-        prompt = f"""You are a professional resume coach. A candidate has a {fit_score}% match for a job.
+        prompt = f"""You are an expert career coach who has reviewed thousands of resumes against job descriptions. A candidate scored {fit_score}% fit for this role.
 
-Matched skills: {', '.join(matched_skills[:10]) if matched_skills else 'none'}
-Missing skills: {', '.join(missing_skills[:10]) if missing_skills else 'none'}
-Job requires: {job_text[:500]}
+JOB DESCRIPTION:
+{job_text[:1200]}
 
-Give exactly 4 specific, actionable resume improvement suggestions. Each suggestion must:
-- Be specific to the missing skills or job requirements
-- Tell exactly what to add, change, or highlight in the resume
-- Be one sentence, direct and practical
+CANDIDATE'S RESUME (excerpt):
+{resume_text[:1200]}
 
-Return ONLY a JSON array of 4 strings, nothing else. Example:
-["suggestion 1", "suggestion 2", "suggestion 3", "suggestion 4"]"""
+MATCHED SKILLS: {', '.join(matched_skills) if matched_skills else 'none'}
+MISSING SKILLS: {', '.join(missing_skills) if missing_skills else 'none'}
+
+Give exactly 5 suggestions that would genuinely move the needle on this candidate's chances. Be specific to THIS resume and THIS job, not generic advice. Each suggestion must:
+- Reference something specific from the resume or job description
+- Tell the candidate exactly what to change, add, reword, or emphasize
+- Explain briefly WHY it matters for this specific role
+- Be 1-2 sentences, direct, no fluff
+
+Avoid suggestions like "add X skill" unless you also explain how to demonstrate it through a project or bullet point. Prioritize highest-impact changes.
+
+Return ONLY a JSON array of exactly 5 strings, nothing else, no markdown formatting, no code fences."""
 
         message = client.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=500,
+            max_tokens=900,
             messages=[{"role": "user", "content": prompt}]
         )
-        import json
         text = message.content[0].text.strip()
+        if text.startswith("```"):
+            text = text.split("```")[1].replace("json", "", 1).strip()
         suggestions = json.loads(text)
-        return suggestions[:4]
+        return suggestions[:5]
     except Exception:
-        # Fallback to rule-based suggestions if API fails
         suggestions = []
         for skill in missing_skills[:3]:
-            suggestions.append(f"Add '{skill}' to your Skills section — it's explicitly required in this job description.")
+            suggestions.append(f"Add a project or bullet point demonstrating '{skill}' — listing it alone carries less weight than showing applied experience.")
         if fit_score < 70:
-            suggestions.append("Rewrite your resume summary to mirror the job description's language and key requirements.")
+            suggestions.append("Rework your resume summary to mirror the exact terminology used in this job description.")
+        if len(missing_skills) > 3:
+            suggestions.append("Focus on closing your top 2-3 skill gaps first through a small project rather than trying to cover everything.")
         return suggestions
 
 def match_resume_to_job(resume_text: str, job_text: str) -> dict:
@@ -70,7 +80,8 @@ def match_resume_to_job(resume_text: str, job_text: str) -> dict:
         sorted(list(missing)),
         sorted(list(matched)),
         fit_score,
-        job_text
+        job_text,
+        resume_text
     )
 
     return {
