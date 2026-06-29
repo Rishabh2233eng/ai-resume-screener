@@ -1,17 +1,13 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
-import jsPDF from "jspdf"
-import html2canvas from "html2canvas"
 
 export default function App() {
   const [resume, setResume] = useState(null)
   const [jobDescription, setJobDescription] = useState("")
-  const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [dragging, setDragging] = useState(false)
-  const resultsRef = useRef(null)
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem("user") || "null")
 
@@ -50,32 +46,21 @@ export default function App() {
 
   const handleSubmit = async () => {
     if (!resume || !jobDescription.trim()) { setError("Please upload a resume and enter a job description."); return }
-    setError(""); setLoading(true); setResult(null)
+    setError(""); setLoading(true)
     const token = localStorage.getItem("token")
     const formData = new FormData()
     formData.append("resume", resume)
     formData.append("job_description", jobDescription)
     try {
       const res = await axios.post("http://127.0.0.1:8000/api/match", formData, { headers: { Authorization: `Bearer ${token}` } })
-      setResult(res.data)
+      sessionStorage.setItem("latestResult", JSON.stringify(res.data))
+      navigate("/results")
     } catch (err) {
       if (err.response?.status === 401) handleLogout()
       else if (err.response?.status === 403) setError(err.response.data.detail)
       else setError("Something went wrong. Make sure the backend is running.")
     } finally { setLoading(false) }
   }
-
-  const handleDownloadPDF = async () => {
-    const canvas = await html2canvas(resultsRef.current, { backgroundColor: "#ffffff" })
-    const pdf = new jsPDF("p", "mm", "a4")
-    const w = pdf.internal.pageSize.getWidth()
-    pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, w, (canvas.height * w) / canvas.width)
-    pdf.save("resumeiq-report.pdf")
-  }
-
-  const scoreColor = (s) => { const n = parseFloat(s); return n >= 70 ? "#047857" : n >= 50 ? "#b45309" : "#b91c1c" }
-  const scoreBg = (s) => { const n = parseFloat(s); return n >= 70 ? "#d1fae5" : n >= 50 ? "#fef3c7" : "#fee2e2" }
-  const scoreBorder = (s) => { const n = parseFloat(s); return n >= 70 ? "#6ee7b7" : n >= 50 ? "#fcd34d" : "#fca5a5" }
 
   return (
     <div style={{ background: "#f1f0ed", minHeight: "100vh", color: "#0f172a", fontFamily: "'Segoe UI', sans-serif" }}>
@@ -88,7 +73,6 @@ export default function App() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <span style={{ fontSize: "13px", color: "#57534e", fontWeight: 500 }}>Hi, {user?.name?.split(" ")[0] || "User"}</span>
-          {result?.is_premium === false && <span style={{ fontSize: "11px", color: "#92400e", background: "#fef3c7", border: "1.5px solid #fcd34d", padding: "4px 10px", borderRadius: "20px", fontWeight: 600 }}>{result.analyses_used}/{result.analyses_limit} used</span>}
           <button onClick={() => navigate("/history")} style={{ padding: "7px 16px", borderRadius: "9px", border: "1.5px solid #d6d3cd", background: "white", color: "#44403c", fontSize: "13px", cursor: "pointer", fontWeight: 500, boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }}>Dashboard</button>
           <button onClick={handleLogout} style={{ padding: "7px 16px", borderRadius: "9px", border: "1.5px solid #d6d3cd", background: "white", color: "#44403c", fontSize: "13px", cursor: "pointer", fontWeight: 500, boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }}>Sign out</button>
         </div>
@@ -166,64 +150,6 @@ export default function App() {
             )}
           </button>
         </div>
-
-        {result && (
-          <div ref={resultsRef}>
-            <div style={{ background: `linear-gradient(135deg, ${scoreBg(result.fit_score)}, white)`, border: `2px solid ${scoreBorder(result.fit_score)}`, borderRadius: "18px", padding: "40px 28px", marginBottom: "18px", textAlign: "center", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
-              <p style={{ fontSize: "11px", color: "#78716c", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "10px", fontWeight: 700 }}>Overall Fit Score</p>
-              <div style={{ fontSize: "76px", fontWeight: 800, marginBottom: "10px", color: scoreColor(result.fit_score), letterSpacing: "-2px" }}>{result.fit_score}%</div>
-              <div style={{ display: "inline-flex", padding: "6px 20px", borderRadius: "20px", background: "white", border: `2px solid ${scoreBorder(result.fit_score)}`, fontSize: "14px", color: scoreColor(result.fit_score), marginBottom: "22px", fontWeight: 700, boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>{result.recommendation}</div>
-              <div style={{ height: "8px", background: "white", borderRadius: "4px", maxWidth: "420px", margin: "0 auto", overflow: "hidden", border: `1px solid ${scoreBorder(result.fit_score)}` }}>
-                <div style={{ height: "100%", width: `${result.fit_score}%`, background: scoreColor(result.fit_score), borderRadius: "4px", transition: "width 1.2s ease" }} />
-              </div>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "18px" }}>
-              {[{ label: "Semantic Score", value: result.semantic_score, sub: "Meaning similarity", icon: "📊" }, { label: "Skill Match", value: result.skill_match_score, sub: `${result.total_job_skills} skills in JD`, icon: "🎯" }].map(item => (
-                <div key={item.label} style={{ background: "white", border: "1.5px solid #e7e5e4", borderRadius: "16px", padding: "22px", textAlign: "center", boxShadow: "0 2px 10px rgba(0,0,0,0.04)" }}>
-                  <p style={{ fontSize: "20px", marginBottom: "8px" }}>{item.icon}</p>
-                  <p style={{ fontSize: "11px", color: "#78716c", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "6px", fontWeight: 700 }}>{item.label}</p>
-                  <p style={{ fontSize: "30px", fontWeight: 800, color: scoreColor(item.value), marginBottom: "4px" }}>{item.value}%</p>
-                  <p style={{ fontSize: "11px", color: "#a8a29e", fontWeight: 500 }}>{item.sub}</p>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "18px" }}>
-              {result.matched_skills.length > 0 && (
-                <div style={{ background: "linear-gradient(135deg, #ecfdf5, white)", border: "1.5px solid #a7f3d0", borderRadius: "16px", padding: "20px", boxShadow: "0 2px 10px rgba(16,185,129,0.06)" }}>
-                  <p style={{ fontSize: "13px", color: "#047857", fontWeight: 800, marginBottom: "12px" }}>✓ Matched ({result.matched_skills.length})</p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "7px" }}>{result.matched_skills.map(s => <span key={s} style={{ padding: "4px 12px", borderRadius: "20px", background: "white", border: "1.5px solid #a7f3d0", fontSize: "11px", color: "#047857", fontWeight: 600 }}>{s}</span>)}</div>
-                </div>
-              )}
-              {result.missing_skills.length > 0 && (
-                <div style={{ background: "linear-gradient(135deg, #fef2f2, white)", border: "1.5px solid #fca5a5", borderRadius: "16px", padding: "20px", boxShadow: "0 2px 10px rgba(239,68,68,0.06)" }}>
-                  <p style={{ fontSize: "13px", color: "#b91c1c", fontWeight: 800, marginBottom: "12px" }}>✕ Missing ({result.missing_skills.length})</p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "7px" }}>{result.missing_skills.map(s => <span key={s} style={{ padding: "4px 12px", borderRadius: "20px", background: "white", border: "1.5px solid #fca5a5", fontSize: "11px", color: "#b91c1c", fontWeight: 600 }}>{s}</span>)}</div>
-                </div>
-              )}
-            </div>
-
-            {result.suggestions?.length > 0 && (
-              <div style={{ background: "linear-gradient(135deg, #eef2ff, #faf5ff)", border: "1.5px solid #c7d2fe", borderRadius: "16px", padding: "22px", marginBottom: "18px", boxShadow: "0 2px 10px rgba(67,56,202,0.06)" }}>
-                <p style={{ fontSize: "14px", color: "#4338ca", fontWeight: 800, marginBottom: "16px", display: "flex", alignItems: "center", gap: "6px" }}>✦ AI Improvement Suggestions</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
-                  {result.suggestions.map((s, i) => (
-                    <div key={i} style={{ display: "flex", gap: "11px", padding: "13px 15px", background: "white", borderRadius: "11px", border: "1.5px solid #e0e7ff" }}>
-                      <div style={{ width: "22px", height: "22px", borderRadius: "7px", background: "linear-gradient(135deg, #4338ca, #7c3aed)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><span style={{ fontSize: "11px", color: "white", fontWeight: 700 }}>{i+1}</span></div>
-                      <p style={{ fontSize: "13px", color: "#44403c", margin: 0, lineHeight: 1.65, fontWeight: 500 }}>{s}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <button onClick={handleDownloadPDF} style={{ width: "100%", padding: "13px", borderRadius: "13px", border: "1.5px solid #d6d3cd", background: "white", color: "#44403c", fontSize: "13px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontWeight: 600, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-              <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-              Download Report as PDF
-            </button>
-          </div>
-        )}
       </div>
       <style>{`@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} } textarea::placeholder{color:#a8a29e}`}</style>
     </div>
