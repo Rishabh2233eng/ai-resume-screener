@@ -33,7 +33,7 @@ export default function App() {
             alert("🎉 You are now a Premium member!"); window.location.reload()
           } catch { alert("Payment verification failed.") }
         },
-        prefill: { name: user?.name || "", email: user?.email || "" }, theme: { color: "#2563eb" }
+        prefill: { name: user?.name || "", email: user?.email || "" }, theme: { color: "#4338ca" }
       }
       new window.Razorpay(options).open()
     } catch { alert("Failed to start payment.") }
@@ -73,155 +73,159 @@ export default function App() {
     pdf.save("resumeiq-report.pdf")
   }
 
-  const scoreColor = (s) => { const n = parseFloat(s); return n >= 70 ? "#059669" : n >= 50 ? "#d97706" : "#dc2626" }
-  const scoreBg = (s) => { const n = parseFloat(s); return n >= 70 ? "#ecfdf5" : n >= 50 ? "#fffbeb" : "#fef2f2" }
-  const scoreBorder = (s) => { const n = parseFloat(s); return n >= 70 ? "#a7f3d0" : n >= 50 ? "#fde68a" : "#fecaca" }
+  const scoreColor = (s) => { const n = parseFloat(s); return n >= 70 ? "#047857" : n >= 50 ? "#b45309" : "#b91c1c" }
+  const scoreBg = (s) => { const n = parseFloat(s); return n >= 70 ? "#d1fae5" : n >= 50 ? "#fef3c7" : "#fee2e2" }
+  const scoreBorder = (s) => { const n = parseFloat(s); return n >= 70 ? "#6ee7b7" : n >= 50 ? "#fcd34d" : "#fca5a5" }
 
   return (
-    <div style={{ background: "#fafaf9", minHeight: "100vh", color: "#0f172a", fontFamily: "'Segoe UI', sans-serif" }}>
-      <nav style={{ borderBottom: "1px solid #e7e5e4", padding: "0 32px", height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50, background: "rgba(250,250,249,0.95)", backdropFilter: "blur(12px)" }}>
+    <div style={{ background: "#f1f0ed", minHeight: "100vh", color: "#0f172a", fontFamily: "'Segoe UI', sans-serif" }}>
+      <nav style={{ borderBottom: "1.5px solid #d6d3cd", padding: "0 32px", height: "60px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50, background: "rgba(241,240,237,0.92)", backdropFilter: "blur(12px)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }} onClick={() => navigate("/")}>
-          <div style={{ width: "30px", height: "30px", borderRadius: "8px", background: "#0f172a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg width="15" height="15" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <div style={{ width: "32px", height: "32px", borderRadius: "9px", background: "linear-gradient(135deg, #4338ca, #7c3aed)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 8px rgba(67,56,202,0.3)" }}>
+            <svg width="16" height="16" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
           </div>
-          <span style={{ fontWeight: 600, fontSize: "15px" }}>Resume<span style={{ color: "#2563eb" }}>IQ</span></span>
+          <span style={{ fontWeight: 700, fontSize: "16px", letterSpacing: "-0.3px" }}>Resume<span style={{ color: "#4338ca" }}>IQ</span></span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span style={{ fontSize: "13px", color: "#94a3b8" }}>Hi, {user?.name?.split(" ")[0] || "User"}</span>
-          {result?.is_premium === false && <span style={{ fontSize: "11px", color: "#d97706", background: "#fffbeb", border: "1px solid #fde68a", padding: "4px 10px", borderRadius: "20px" }}>{result.analyses_used}/{result.analyses_limit} used</span>}
-          <button onClick={() => navigate("/history")} style={{ padding: "6px 14px", borderRadius: "8px", border: "1px solid #e2e8f0", background: "white", color: "#475569", fontSize: "13px", cursor: "pointer" }}>Dashboard</button>
-          <button onClick={handleLogout} style={{ padding: "6px 14px", borderRadius: "8px", border: "1px solid #e2e8f0", background: "white", color: "#475569", fontSize: "13px", cursor: "pointer" }}>Sign out</button>
+          <span style={{ fontSize: "13px", color: "#57534e", fontWeight: 500 }}>Hi, {user?.name?.split(" ")[0] || "User"}</span>
+          {result?.is_premium === false && <span style={{ fontSize: "11px", color: "#92400e", background: "#fef3c7", border: "1.5px solid #fcd34d", padding: "4px 10px", borderRadius: "20px", fontWeight: 600 }}>{result.analyses_used}/{result.analyses_limit} used</span>}
+          <button onClick={() => navigate("/history")} style={{ padding: "7px 16px", borderRadius: "9px", border: "1.5px solid #d6d3cd", background: "white", color: "#44403c", fontSize: "13px", cursor: "pointer", fontWeight: 500, boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }}>Dashboard</button>
+          <button onClick={handleLogout} style={{ padding: "7px 16px", borderRadius: "9px", border: "1.5px solid #d6d3cd", background: "white", color: "#44403c", fontSize: "13px", cursor: "pointer", fontWeight: 500, boxShadow: "0 1px 2px rgba(0,0,0,0.04)" }}>Sign out</button>
         </div>
       </nav>
 
-      <div style={{ maxWidth: "760px", margin: "0 auto", padding: "48px 24px" }}>
+      <div style={{ maxWidth: "760px", margin: "0 auto", padding: "52px 24px" }}>
         <div style={{ textAlign: "center", marginBottom: "44px" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 14px", borderRadius: "20px", border: "1px solid #bfdbfe", background: "#eff6ff", fontSize: "12px", color: "#2563eb", marginBottom: "18px" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "5px 16px", borderRadius: "20px", border: "1.5px solid #c7d2fe", background: "#eef2ff", fontSize: "12px", color: "#4338ca", marginBottom: "20px", fontWeight: 600 }}>
             <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
             Powered by semantic AI matching
           </div>
-          <h1 style={{ fontSize: "36px", fontWeight: 600, lineHeight: 1.15, letterSpacing: "-1px", marginBottom: "12px" }}>
-            Know your fit score<br /><span style={{ color: "#2563eb" }}>before you apply</span>
+          <h1 style={{ fontSize: "38px", fontWeight: 800, lineHeight: 1.15, letterSpacing: "-1.2px", marginBottom: "14px" }}>
+            Know your fit score<br />
+            <span style={{ background: "linear-gradient(90deg, #4338ca, #7c3aed, #c026d3)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>before you apply</span>
           </h1>
-          <p style={{ fontSize: "15px", color: "#64748b", maxWidth: "440px", margin: "0 auto" }}>Upload your resume and paste a job description — get instant AI-powered match analysis</p>
+          <p style={{ fontSize: "15px", color: "#57534e", maxWidth: "440px", margin: "0 auto", fontWeight: 500 }}>Upload your resume and paste a job description — get instant AI-powered match analysis</p>
         </div>
 
-        <div style={{ background: "white", border: "1px solid #e7e5e4", borderRadius: "16px", padding: "24px", marginBottom: "20px", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
+        <div style={{ background: "white", border: "1.5px solid #d6d3cd", borderRadius: "18px", padding: "28px", marginBottom: "20px", boxShadow: "0 4px 16px rgba(0,0,0,0.06)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px", marginBottom: "22px" }}>
             <div>
-              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "#94a3b8", marginBottom: "8px" }}>Your Resume</label>
+              <label style={{ display: "block", fontSize: "11px", fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "#78716c", marginBottom: "9px" }}>Your Resume</label>
               <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} onClick={() => document.getElementById("fileInput").click()}
-                style={{ border: `2px dashed ${dragging ? "#2563eb" : resume ? "#10b981" : "#e2e8f0"}`, borderRadius: "12px", padding: "28px 16px", textAlign: "center", cursor: "pointer", background: dragging ? "#eff6ff" : resume ? "#ecfdf5" : "#fafaf9", height: "150px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }}>
+                style={{ border: `2.5px dashed ${dragging ? "#4338ca" : resume ? "#059669" : "#d6d3cd"}`, borderRadius: "14px", padding: "28px 16px", textAlign: "center", cursor: "pointer", background: dragging ? "#eef2ff" : resume ? "#ecfdf5" : "#fafaf9", height: "152px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", transition: "all 0.2s" }}>
                 {resume ? (
                   <>
-                    <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: "#d1fae5", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "8px" }}>
-                      <svg width="18" height="18" fill="none" stroke="#059669" strokeWidth="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: "#a7f3d0", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "9px" }}>
+                      <svg width="19" height="19" fill="none" stroke="#047857" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
                     </div>
-                    <p style={{ fontSize: "12px", color: "#059669", fontWeight: 600 }}>{resume.name.slice(0, 24)}...</p>
-                    <p style={{ fontSize: "11px", color: "#94a3b8" }}>Click to replace</p>
+                    <p style={{ fontSize: "12px", color: "#047857", fontWeight: 700 }}>{resume.name.slice(0, 24)}...</p>
+                    <p style={{ fontSize: "11px", color: "#78716c" }}>Click to replace</p>
                   </>
                 ) : (
                   <>
-                    <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "8px" }}>
-                      <svg width="18" height="18" fill="none" stroke="#2563eb" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: "#c7d2fe", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "9px" }}>
+                      <svg width="19" height="19" fill="none" stroke="#4338ca" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     </div>
-                    <p style={{ fontSize: "13px", color: "#64748b", fontWeight: 500 }}>Drop PDF here</p>
-                    <p style={{ fontSize: "11px", color: "#94a3b8" }}>or click to browse</p>
+                    <p style={{ fontSize: "13px", color: "#44403c", fontWeight: 600 }}>Drop PDF here</p>
+                    <p style={{ fontSize: "11px", color: "#a8a29e" }}>or click to browse</p>
                   </>
                 )}
               </div>
               <input id="fileInput" type="file" accept=".pdf" className="hidden" onChange={(e) => { setResume(e.target.files[0]); setError("") }} />
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <label style={{ display: "block", fontSize: "11px", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "#94a3b8", marginBottom: "8px" }}>Job Description</label>
+              <label style={{ display: "block", fontSize: "11px", fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: "#78716c", marginBottom: "9px" }}>Job Description</label>
               <textarea rows={6} placeholder="Paste the job description here..." value={jobDescription} onChange={(e) => setJobDescription(e.target.value)}
-                style={{ flex: 1, background: "#fafaf9", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "12px 14px", fontSize: "13px", color: "#0f172a", resize: "none", outline: "none", fontFamily: "inherit", lineHeight: 1.6 }} />
+                style={{ flex: 1, background: "#fafaf9", border: "1.5px solid #e7e5e4", borderRadius: "14px", padding: "13px 15px", fontSize: "13px", color: "#0f172a", resize: "none", outline: "none", fontFamily: "inherit", lineHeight: 1.6, transition: "border-color 0.2s" }}
+                onFocus={(e) => e.target.style.borderColor = "#4338ca"} onBlur={(e) => e.target.style.borderColor = "#e7e5e4"} />
             </div>
           </div>
 
           {error && (error.includes("limit reached") ? (
-            <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "14px", padding: "24px", textAlign: "center", marginBottom: "16px" }}>
-              <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
-                <svg width="20" height="20" fill="none" stroke="#d97706" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            <div style={{ background: "linear-gradient(135deg, #fef3c7, #fde68a30)", border: "1.5px solid #fcd34d", borderRadius: "16px", padding: "26px", textAlign: "center", marginBottom: "18px" }}>
+              <div style={{ width: "42px", height: "42px", borderRadius: "11px", background: "#fde68a", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+                <svg width="21" height="21" fill="none" stroke="#92400e" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
               </div>
-              <h3 style={{ fontSize: "16px", fontWeight: 700, margin: "0 0 6px" }}>Free tier limit reached</h3>
-              <p style={{ fontSize: "13px", color: "#92400e", margin: "0 0 16px" }}>Upgrade to Premium for unlimited analyses and AI suggestions</p>
-              <button onClick={handleUpgrade} style={{ padding: "11px 28px", borderRadius: "10px", border: "none", background: "#d97706", color: "white", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>Upgrade — ₹99/month</button>
+              <h3 style={{ fontSize: "16px", fontWeight: 800, margin: "0 0 6px" }}>Free tier limit reached</h3>
+              <p style={{ fontSize: "13px", color: "#92400e", margin: "0 0 16px", fontWeight: 500 }}>Upgrade to Premium for unlimited analyses and AI suggestions</p>
+              <button onClick={handleUpgrade} style={{ padding: "12px 30px", borderRadius: "11px", border: "none", background: "linear-gradient(135deg, #d97706, #ea580c)", color: "white", fontSize: "14px", fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 12px rgba(217,119,6,0.3)" }}>Upgrade — ₹99/month</button>
             </div>
           ) : (
-            <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "10px", padding: "10px 14px", marginBottom: "14px" }}>
-              <p style={{ color: "#dc2626", fontSize: "13px", margin: 0 }}>{error}</p>
+            <div style={{ background: "#fee2e2", border: "1.5px solid #fca5a5", borderRadius: "11px", padding: "11px 15px", marginBottom: "16px" }}>
+              <p style={{ color: "#b91c1c", fontSize: "13px", margin: 0, fontWeight: 600 }}>{error}</p>
             </div>
           ))}
 
           <button onClick={handleSubmit} disabled={loading}
-            style={{ width: "100%", padding: "14px", borderRadius: "12px", border: "none", background: loading ? "#94a3b8" : "#0f172a", color: "white", fontSize: "15px", fontWeight: 600, cursor: loading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+            style={{ width: "100%", padding: "15px", borderRadius: "13px", border: "none", background: loading ? "#a8a29e" : "linear-gradient(135deg, #4338ca, #7c3aed)", color: "white", fontSize: "15px", fontWeight: 700, cursor: loading ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", boxShadow: loading ? "none" : "0 4px 16px rgba(67,56,202,0.3)", transition: "transform 0.15s" }}
+            onMouseEnter={(e) => !loading && (e.currentTarget.style.transform = "translateY(-1px)")} onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}>
             {loading ? (
               <><span style={{ display: "inline-flex", gap: "5px" }}>{[0,1,2].map(i => <span key={i} style={{ width: "6px", height: "6px", borderRadius: "50%", background: "white", animation: "bounce 0.8s infinite", animationDelay: `${i*0.15}s` }} />)}</span>Analyzing...</>
             ) : (
-              <><svg width="16" height="16" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Analyze Match</>
+              <><svg width="17" height="17" fill="none" stroke="white" strokeWidth="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Analyze Match</>
             )}
           </button>
         </div>
 
         {result && (
           <div ref={resultsRef}>
-            <div style={{ background: scoreBg(result.fit_score), border: `1px solid ${scoreBorder(result.fit_score)}`, borderRadius: "16px", padding: "36px 28px", marginBottom: "16px", textAlign: "center" }}>
-              <p style={{ fontSize: "11px", color: "#94a3b8", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "8px" }}>Overall Fit Score</p>
-              <div style={{ fontSize: "68px", fontWeight: 700, marginBottom: "8px", color: scoreColor(result.fit_score) }}>{result.fit_score}%</div>
-              <div style={{ display: "inline-flex", padding: "5px 18px", borderRadius: "20px", background: "white", border: `1px solid ${scoreBorder(result.fit_score)}`, fontSize: "14px", color: scoreColor(result.fit_score), marginBottom: "18px", fontWeight: 600 }}>{result.recommendation}</div>
-              <div style={{ height: "6px", background: "white", borderRadius: "3px", maxWidth: "400px", margin: "0 auto", overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${result.fit_score}%`, background: scoreColor(result.fit_score), borderRadius: "3px", transition: "width 1s ease" }} />
+            <div style={{ background: `linear-gradient(135deg, ${scoreBg(result.fit_score)}, white)`, border: `2px solid ${scoreBorder(result.fit_score)}`, borderRadius: "18px", padding: "40px 28px", marginBottom: "18px", textAlign: "center", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
+              <p style={{ fontSize: "11px", color: "#78716c", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "10px", fontWeight: 700 }}>Overall Fit Score</p>
+              <div style={{ fontSize: "76px", fontWeight: 800, marginBottom: "10px", color: scoreColor(result.fit_score), letterSpacing: "-2px" }}>{result.fit_score}%</div>
+              <div style={{ display: "inline-flex", padding: "6px 20px", borderRadius: "20px", background: "white", border: `2px solid ${scoreBorder(result.fit_score)}`, fontSize: "14px", color: scoreColor(result.fit_score), marginBottom: "22px", fontWeight: 700, boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}>{result.recommendation}</div>
+              <div style={{ height: "8px", background: "white", borderRadius: "4px", maxWidth: "420px", margin: "0 auto", overflow: "hidden", border: `1px solid ${scoreBorder(result.fit_score)}` }}>
+                <div style={{ height: "100%", width: `${result.fit_score}%`, background: scoreColor(result.fit_score), borderRadius: "4px", transition: "width 1.2s ease" }} />
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
-              {[{ label: "Semantic Score", value: result.semantic_score, sub: "Meaning similarity" }, { label: "Skill Match", value: result.skill_match_score, sub: `${result.total_job_skills} skills in JD` }].map(item => (
-                <div key={item.label} style={{ background: "white", border: "1px solid #e7e5e4", borderRadius: "14px", padding: "20px", textAlign: "center" }}>
-                  <p style={{ fontSize: "11px", color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "6px" }}>{item.label}</p>
-                  <p style={{ fontSize: "26px", fontWeight: 700, color: scoreColor(item.value), marginBottom: "4px" }}>{item.value}%</p>
-                  <p style={{ fontSize: "11px", color: "#94a3b8" }}>{item.sub}</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "18px" }}>
+              {[{ label: "Semantic Score", value: result.semantic_score, sub: "Meaning similarity", icon: "📊" }, { label: "Skill Match", value: result.skill_match_score, sub: `${result.total_job_skills} skills in JD`, icon: "🎯" }].map(item => (
+                <div key={item.label} style={{ background: "white", border: "1.5px solid #e7e5e4", borderRadius: "16px", padding: "22px", textAlign: "center", boxShadow: "0 2px 10px rgba(0,0,0,0.04)" }}>
+                  <p style={{ fontSize: "20px", marginBottom: "8px" }}>{item.icon}</p>
+                  <p style={{ fontSize: "11px", color: "#78716c", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "6px", fontWeight: 700 }}>{item.label}</p>
+                  <p style={{ fontSize: "30px", fontWeight: 800, color: scoreColor(item.value), marginBottom: "4px" }}>{item.value}%</p>
+                  <p style={{ fontSize: "11px", color: "#a8a29e", fontWeight: 500 }}>{item.sub}</p>
                 </div>
               ))}
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "18px" }}>
               {result.matched_skills.length > 0 && (
-                <div style={{ background: "#ecfdf5", border: "1px solid #a7f3d0", borderRadius: "14px", padding: "18px" }}>
-                  <p style={{ fontSize: "12px", color: "#059669", fontWeight: 700, marginBottom: "10px" }}>✓ Matched ({result.matched_skills.length})</p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>{result.matched_skills.map(s => <span key={s} style={{ padding: "3px 10px", borderRadius: "20px", background: "white", border: "1px solid #a7f3d0", fontSize: "11px", color: "#059669" }}>{s}</span>)}</div>
+                <div style={{ background: "linear-gradient(135deg, #ecfdf5, white)", border: "1.5px solid #a7f3d0", borderRadius: "16px", padding: "20px", boxShadow: "0 2px 10px rgba(16,185,129,0.06)" }}>
+                  <p style={{ fontSize: "13px", color: "#047857", fontWeight: 800, marginBottom: "12px" }}>✓ Matched ({result.matched_skills.length})</p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "7px" }}>{result.matched_skills.map(s => <span key={s} style={{ padding: "4px 12px", borderRadius: "20px", background: "white", border: "1.5px solid #a7f3d0", fontSize: "11px", color: "#047857", fontWeight: 600 }}>{s}</span>)}</div>
                 </div>
               )}
               {result.missing_skills.length > 0 && (
-                <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "14px", padding: "18px" }}>
-                  <p style={{ fontSize: "12px", color: "#dc2626", fontWeight: 700, marginBottom: "10px" }}>✕ Missing ({result.missing_skills.length})</p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>{result.missing_skills.map(s => <span key={s} style={{ padding: "3px 10px", borderRadius: "20px", background: "white", border: "1px solid #fecaca", fontSize: "11px", color: "#dc2626" }}>{s}</span>)}</div>
+                <div style={{ background: "linear-gradient(135deg, #fef2f2, white)", border: "1.5px solid #fca5a5", borderRadius: "16px", padding: "20px", boxShadow: "0 2px 10px rgba(239,68,68,0.06)" }}>
+                  <p style={{ fontSize: "13px", color: "#b91c1c", fontWeight: 800, marginBottom: "12px" }}>✕ Missing ({result.missing_skills.length})</p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "7px" }}>{result.missing_skills.map(s => <span key={s} style={{ padding: "4px 12px", borderRadius: "20px", background: "white", border: "1.5px solid #fca5a5", fontSize: "11px", color: "#b91c1c", fontWeight: 600 }}>{s}</span>)}</div>
                 </div>
               )}
             </div>
 
             {result.suggestions?.length > 0 && (
-              <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "14px", padding: "20px", marginBottom: "16px" }}>
-                <p style={{ fontSize: "13px", color: "#2563eb", fontWeight: 700, marginBottom: "14px" }}>✦ AI Improvement Suggestions</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ background: "linear-gradient(135deg, #eef2ff, #faf5ff)", border: "1.5px solid #c7d2fe", borderRadius: "16px", padding: "22px", marginBottom: "18px", boxShadow: "0 2px 10px rgba(67,56,202,0.06)" }}>
+                <p style={{ fontSize: "14px", color: "#4338ca", fontWeight: 800, marginBottom: "16px", display: "flex", alignItems: "center", gap: "6px" }}>✦ AI Improvement Suggestions</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "9px" }}>
                   {result.suggestions.map((s, i) => (
-                    <div key={i} style={{ display: "flex", gap: "10px", padding: "12px 14px", background: "white", borderRadius: "10px", border: "1px solid #dbeafe" }}>
-                      <div style={{ width: "20px", height: "20px", borderRadius: "6px", background: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><span style={{ fontSize: "10px", color: "white", fontWeight: 700 }}>{i+1}</span></div>
-                      <p style={{ fontSize: "13px", color: "#334155", margin: 0, lineHeight: 1.6 }}>{s}</p>
+                    <div key={i} style={{ display: "flex", gap: "11px", padding: "13px 15px", background: "white", borderRadius: "11px", border: "1.5px solid #e0e7ff" }}>
+                      <div style={{ width: "22px", height: "22px", borderRadius: "7px", background: "linear-gradient(135deg, #4338ca, #7c3aed)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><span style={{ fontSize: "11px", color: "white", fontWeight: 700 }}>{i+1}</span></div>
+                      <p style={{ fontSize: "13px", color: "#44403c", margin: 0, lineHeight: 1.65, fontWeight: 500 }}>{s}</p>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            <button onClick={handleDownloadPDF} style={{ width: "100%", padding: "12px", borderRadius: "12px", border: "1px solid #e2e8f0", background: "white", color: "#475569", fontSize: "13px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <button onClick={handleDownloadPDF} style={{ width: "100%", padding: "13px", borderRadius: "13px", border: "1.5px solid #d6d3cd", background: "white", color: "#44403c", fontSize: "13px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontWeight: 600, boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+              <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               Download Report as PDF
             </button>
           </div>
         )}
       </div>
-      <style>{`@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} } textarea::placeholder{color:#cbd5e1}`}</style>
+      <style>{`@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} } textarea::placeholder{color:#a8a29e}`}</style>
     </div>
   )
 }
