@@ -1,82 +1,80 @@
 @import "tailwindcss";
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Global animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-/* Mobile responsiveness — all pages */
+.animate-fadeUp   { animation: fadeUp 0.5s ease forwards; }
+.animate-fadeIn   { animation: fadeIn 0.4s ease forwards; }
+.animate-scaleIn  { animation: scaleIn 0.4s ease forwards; }
+
+/* Smooth hover lift for cards */
+.card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.card-hover:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important; }
+
+/* Button press effect */
+button:active { transform: scale(0.98) !important; }
+
+input::placeholder  { color: #a8a29e; }
+textarea::placeholder { color: #a8a29e; }
+
+/* ─── Mobile responsiveness ─── */
 @media (max-width: 768px) {
 
-  /* Login / Register split screen — stack vertically */
-  .auth-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .auth-left {
-    display: none !important;
-  }
-  .auth-right {
-    padding: 40px 28px !important;
-  }
+  /* Auth split screen */
+  .auth-grid { grid-template-columns: 1fr !important; }
+  .auth-left  { display: none !important; }
+  .auth-right { padding: 36px 24px !important; }
 
-  /* App analyzer — stack columns */
-  .analyzer-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Navbar — tighter padding */
-  .main-nav {
-    padding: 0 16px !important;
-  }
-
-  /* Hero headline */
-  .hero-headline {
-    font-size: 32px !important;
-    letter-spacing: -0.5px !important;
-  }
+  /* Analyzer two-column */
+  .analyzer-grid { grid-template-columns: 1fr !important; }
 
   /* Results sub-score grid */
-  .score-grid {
-    grid-template-columns: 1fr !important;
-  }
+  .score-grid { grid-template-columns: 1fr !important; }
 
-  /* Dashboard stats */
-  .stats-grid {
-    grid-template-columns: 1fr 1fr !important;
-  }
+  /* History stats */
+  .stats-grid { grid-template-columns: 1fr 1fr !important; }
 
-  /* Landing page */
-  .landing-nav {
-    padding: 0 16px !important;
-  }
-  .landing-hero {
-    padding: 60px 20px 40px !important;
-  }
-  .landing-stats {
-    gap: 24px !important;
-  }
-  .cta-row {
-    flex-direction: column !important;
-    align-items: center !important;
-  }
-  .cta-row button {
-    width: 100% !important;
-    max-width: 320px !important;
-  }
+  /* Pricing grid */
+  .pricing-grid { grid-template-columns: 1fr !important; }
+
+  /* Landing */
+  .landing-ctas { flex-direction: column !important; align-items: center !important; }
+  .landing-ctas button { width: 100% !important; max-width: 320px !important; }
+  .landing-stats { gap: 20px !important; }
+
+  /* Navbar tighter */
+  nav { padding: 0 16px !important; }
+  nav span[style*="13px"] { display: none !important; }
 }
 
 @media (max-width: 480px) {
-  .auth-right {
-    padding: 32px 20px !important;
-  }
-  .hero-headline {
-    font-size: 26px !important;
-  }
-  .score-big {
-    font-size: 52px !important;
-  }
+  .score-big { font-size: 56px !important; }
+  h1[style*="38px"] { font-size: 28px !important; }
+  h1[style*="36px"] { font-size: 26px !important; }
+  .stats-grid { grid-template-columns: 1fr !important; }
 }
-
-input::placeholder { color: #334155; }
-textarea::placeholder { color: #334155; }
